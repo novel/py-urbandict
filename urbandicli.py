@@ -31,8 +31,6 @@ class UrbanDictParser(HTMLParser):
                 elif attrs[0][0] == 'class' and attrs[0][1] == 'example':
                     self.inside_example_section = True
 
-
-
     def handle_endtag(self, tag):
         if tag == 'div':
             if self.inside_def_section is True:
@@ -40,10 +38,8 @@ class UrbanDictParser(HTMLParser):
             elif self.inside_example_section is True:
                 self.inside_example_section = False
 
-
     def handle_data(self, data):
         if self.inside_index_item is True:
-            #rint data.strip()
             self.current_index = data.strip()[:-1]
             self.translations[self.current_index] = {}
             self.translations[self.current_index]['def'] = ''
@@ -77,7 +73,6 @@ if __name__ == "__main__":
     urbanDictParser.feed(data)
     translations = urbanDictParser.getTranslations()
 
-    #print translations
     # pretty print them
     indexen = translations.keys()
     indexen.sort()
@@ -88,4 +83,3 @@ if __name__ == "__main__":
         if translations[index]['example'] != '':
             print "Examples:"
             print translations[index]['example'].replace('\r', '\n')
-    
