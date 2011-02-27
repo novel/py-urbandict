@@ -5,8 +5,6 @@
 # Author: Roman Bogorodskiy <bogorodskiy@gmail.com>
 
 import urllib.request, urllib.error, urllib.parse
-import sys
-import textwrap
 from html.parser import HTMLParser
 from urllib.parse import quote as urlquote
 
@@ -15,23 +13,22 @@ class UrbanDictParser(HTMLParser):
     inside_word_section = False
     inside_def_section = False
     inside_example_section = False
-#    current_index = 0
     translations = []
 
     def handle_starttag(self, tag, attrs):
-        if tag == "td":
-            attrs_dict = dict(attrs)
+        attrs_dict = dict(attrs)
 
+        if tag == "td":
             if 'class' in attrs_dict:
                 if attrs_dict['class'] == 'index':
                     self.inside_index_item = True
                 elif attrs_dict['class'] == 'word':
                     self.inside_word_section = True
         elif tag == "div":
-            if len(attrs) > 0:
-                if attrs[0][0] == 'class' and attrs[0][1] == 'definition':
+            if 'class' in attrs_dict:
+                if attrs_dict['class'] == 'definition':
                     self.inside_def_section = True
-                elif attrs[0][0] == 'class' and attrs[0][1] == 'example':
+                elif attrs_dict['class'] == 'example':
                     self.inside_example_section = True
 
     def handle_endtag(self, tag):
@@ -43,10 +40,7 @@ class UrbanDictParser(HTMLParser):
 
     def handle_data(self, data):
         if self.inside_index_item is True:
- #           self.current_index += 1
             self.translations.append({})
-#            self.translations[:-1] = {}
-#            print(self.translations[-1])
             self.translations[-1]['def'] = ''
             self.translations[-1]['example'] = ''
             self.inside_index_item = False
@@ -58,41 +52,12 @@ class UrbanDictParser(HTMLParser):
         elif self.inside_example_section is True:
             self.translations[-1]['example'] += data.replace('\r', '\n')
 
-    def getTranslations(self):
-        return self.translations
-
-def usage():
-    print("Usage: %s <term>\n" % sys.argv[0])
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        usage()
-        sys.exit(1)
-
-    term = urlquote(sys.argv[1])
-
-    f = urllib.request.urlopen("http://www.urbandictionary.com/define.php?term=%s" % term)
+def define(term):
+    f = urllib.request.urlopen(("http://www.urbandictionary.com/"
+            "define.php?term=%s") % urlquote(term))
     data = f.read().decode('utf-8')
 
     urbanDictParser = UrbanDictParser()
     urbanDictParser.feed(data)
-    translations = urbanDictParser.getTranslations()
 
-    for index in range(len(translations)):
-        print("%s. %s" % (index + 1, translations[index]['word']))
-        print('\n'.join(textwrap.wrap(
-                translations[index]['def'],
-                initial_indent='  ',
-                subsequent_indent='  ')
-                )
-            )
-
-        if translations[index]['example'] != '':
-            print("\n  Examples:\n")
-            print('\n'.join(textwrap.wrap(
-                    translations[index]['example'],
-                    initial_indent='  * ',
-                    subsequent_indent=' ' * 4)
-                    )
-                )
-        print("\n")
+    return urbanDictParser.translations
