@@ -80,9 +80,19 @@ if __name__ == "__main__":
 
     for index in range(len(translations)):
         print("%s. %s" % (index + 1, translations[index]['word']))
-        print('\n'.join(textwrap.wrap(translations[index]['def'])))
+        print('\n'.join(textwrap.wrap(
+                translations[index]['def'],
+                initial_indent='  ',
+                subsequent_indent='  ')
+                )
+            )
 
         if translations[index]['example'] != '':
-            print("Examples:")
-            print('\n'.join(textwrap.wrap(translations[index]['example'])))
+            print("\n  Examples:\n")
+            print('\n'.join(textwrap.wrap(
+                    translations[index]['example'],
+                    initial_indent='  * ',
+                    subsequent_indent=' ' * 4)
+                    )
+                )
         print("\n")
