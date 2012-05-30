@@ -4,9 +4,20 @@
 #
 # Author: Roman Bogorodskiy <bogorodskiy@gmail.com>
 
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 from html.parser import HTMLParser
 from urllib.parse import quote as urlquote
+
+
+class TermType(object):
+    pass
+
+
+class TermTypeRandom(TermType):
+    pass
+
 
 class UrbanDictParser(HTMLParser):
     inside_index_item = False
@@ -52,9 +63,15 @@ class UrbanDictParser(HTMLParser):
         elif self.inside_example_section is True:
             self.translations[-1]['example'] += data.replace('\r', '\n')
 
+
 def define(term):
-    f = urllib.request.urlopen(("http://www.urbandictionary.com/"
-            "define.php?term=%s") % urlquote(term))
+    if isinstance(term, TermTypeRandom):
+        url = "http://www.urbandictionary.com/random.php"
+    else:
+        url = "http://www.urbandictionary.com/define.php?term=%s" % \
+                urlquote(term)
+
+    f = urllib.request.urlopen(url)
     data = f.read().decode('utf-8')
 
     urbanDictParser = UrbanDictParser()
