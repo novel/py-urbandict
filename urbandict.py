@@ -1,14 +1,19 @@
-#!/usr/bin/env python3.2
+#!/usr/bin/env python
 #
 # Simple interface to urbandictionary.com
 #
 # Author: Roman Bogorodskiy <bogorodskiy@gmail.com>
 
-import urllib.request
-import urllib.error
-import urllib.parse
-from html.parser import HTMLParser
-from urllib.parse import quote as urlquote
+import sys
+
+if sys.version < '3':
+    from urllib import quote as urlquote
+    from urllib2 import urlopen
+    from HTMLParser import HTMLParser
+else:
+    from urllib.request import urlopen
+    from urllib.parse import quote as urlquote
+    from html.parser import HTMLParser
 
 
 class TermType(object):
@@ -71,7 +76,7 @@ def define(term):
         url = "http://www.urbandictionary.com/define.php?term=%s" % \
                 urlquote(term)
 
-    f = urllib.request.urlopen(url)
+    f = urlopen(url)
     data = f.read().decode('utf-8')
 
     urbanDictParser = UrbanDictParser()

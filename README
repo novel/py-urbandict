@@ -12,8 +12,6 @@ Just run:
 
   sudo setup.py install
 
-You will need python 3.2 or newer.
-
 Usage
 __________
 To use it from command line, just use 'urbancli' tool like that:
