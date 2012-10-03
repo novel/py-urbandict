@@ -25,11 +25,14 @@ class TermTypeRandom(TermType):
 
 
 class UrbanDictParser(HTMLParser):
-    inside_index_item = False
-    inside_word_section = False
-    inside_def_section = False
-    inside_example_section = False
-    translations = []
+
+    def __init__(self, *args, **kwargs):
+        HTMLParser.__init__(self, *args, **kwargs)
+        self.inside_index_item = False
+        self.inside_word_section = False
+        self.inside_def_section = False
+        self.inside_example_section = False
+        self.translations = []
 
     def handle_starttag(self, tag, attrs):
         attrs_dict = dict(attrs)
