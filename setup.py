@@ -5,6 +5,9 @@ from setuptools import setup
 
 setup(name='urbandict',
         version='0.2',
+        author='Roman Bogorodskiy',
+        author_email='bogorodskiy@gmail.com',
+        url='https://github.com/novel/py-urbandict',
         py_modules=['urbandict'],
         scripts=['urbandicli'],
         test_suite='nose.collector',
