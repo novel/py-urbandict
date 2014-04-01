@@ -23,7 +23,7 @@ def paged_output(string):
         pager_args += ['-r', '-F', '-X']
 
     p = subprocess.Popen([pager] + pager_args, stdin=subprocess.PIPE)
-    p.stdin.write(bytes(string, "utf-8"))
+    p.stdin.write(string.encode('utf-8'))
     p.stdin.close()
     p.wait()
 
