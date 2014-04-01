@@ -28,48 +28,41 @@ class UrbanDictParser(HTMLParser):
 
     def __init__(self, *args, **kwargs):
         HTMLParser.__init__(self, *args, **kwargs)
-        self.inside_index_item = False
-        self.inside_word_section = False
-        self.inside_def_section = False
-        self.inside_example_section = False
+        self._section = None
         self.translations = []
 
     def handle_starttag(self, tag, attrs):
         attrs_dict = dict(attrs)
 
-        if tag == "td":
-            if 'class' in attrs_dict:
-                if attrs_dict['class'] == 'index':
-                    self.inside_index_item = True
-                elif attrs_dict['class'] == 'word':
-                    self.inside_word_section = True
-        elif tag == "div":
-            if 'class' in attrs_dict:
-                if attrs_dict['class'] == 'definition':
-                    self.inside_def_section = True
-                elif attrs_dict['class'] == 'example':
-                    self.inside_example_section = True
+        if tag != "div":
+            return
+
+        div_class = attrs_dict.get('class')
+        if div_class in ('word', 'meaning', 'example'):
+            self._section = div_class
+            if div_class == 'word':  # NOTE: assume 'word' is the first section
+                self.translations.append(
+                    {'word': '', 'def': '', 'example': ''})
 
     def handle_endtag(self, tag):
         if tag == 'div':
-            if self.inside_def_section is True:
-                self.inside_def_section = False
-            elif self.inside_example_section is True:
-                self.inside_example_section = False
+            #NOTE: assume there is no nested <div> in the known sections
+            self._section = None
 
     def handle_data(self, data):
-        if self.inside_index_item is True:
-            self.translations.append({})
-            self.translations[-1]['def'] = ''
-            self.translations[-1]['example'] = ''
-            self.inside_index_item = False
-        elif self.inside_word_section is True:
-            self.translations[-1]['word'] = data.strip()
-            self.inside_word_section = False
-        elif self.inside_def_section is True:
-            self.translations[-1]['def'] += data.replace('\r', '\n')
-        elif self.inside_example_section is True:
-            self.translations[-1]['example'] += data.replace('\r', '\n')
+        if not self._section:
+            return
+
+        if self._section == 'meaning':
+            self._section = 'def'
+        elif self._section == 'word':
+            data = data.strip()
+
+        self.translations[-1][self._section] += normalize_newlines(data)
+
+
+def normalize_newlines(text):
+    return text.replace('\r\n', '\n').replace('\r', '\n')
 
 
 def define(term):
@@ -77,7 +70,7 @@ def define(term):
         url = "http://www.urbandictionary.com/random.php"
     else:
         url = "http://www.urbandictionary.com/define.php?term=%s" % \
-                urlquote(term)
+              urlquote(term)
 
     f = urlopen(url)
     data = f.read().decode('utf-8')
