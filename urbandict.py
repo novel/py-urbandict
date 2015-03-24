@@ -38,9 +38,9 @@ class UrbanDictParser(HTMLParser):
             return
 
         div_class = attrs_dict.get('class')
-        if div_class in ('word', 'meaning', 'example'):
+        if div_class in ('def-header', 'meaning', 'example'):
             self._section = div_class
-            if div_class == 'word':  # NOTE: assume 'word' is the first section
+            if div_class == 'def-header':  # NOTE: assume 'word' is the first section
                 self.translations.append(
                     {'word': '', 'def': '', 'example': ''})
 
@@ -55,8 +55,9 @@ class UrbanDictParser(HTMLParser):
 
         if self._section == 'meaning':
             self._section = 'def'
-        elif self._section == 'word':
+        elif self._section == 'def-header':
             data = data.strip()
+            self._section = 'word'
 
         self.translations[-1][self._section] += normalize_newlines(data)
 
