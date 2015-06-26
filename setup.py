@@ -4,7 +4,7 @@ import multiprocessing
 from setuptools import setup
 
 setup(name='urbandict',
-        version='0.2',
+        version='0.3',
         py_modules=['urbandict'],
         scripts=['urbandicli'],
         classifiers=[
