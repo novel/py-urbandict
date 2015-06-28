@@ -4,11 +4,12 @@ import multiprocessing
 from setuptools import setup
 
 setup(name='urbandict',
-        version='0.3',
+        version='0.4',
         py_modules=['urbandict'],
         scripts=['urbandicli'],
         author='Roman Bogorodskiy',
         author_email='bogorodskiy@gmail.com',
+        description='CLI client and a library for urbandictionary.com',
         url='https://github.com/novel/py-urbandict',
         classifiers=[
                 "Environment :: Console",
