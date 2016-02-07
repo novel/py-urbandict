@@ -4,7 +4,7 @@ import multiprocessing
 from setuptools import setup
 
 setup(name='urbandict',
-        version='0.4',
+        version='0.5',
         py_modules=['urbandict'],
         scripts=['urbandicli'],
         author='Roman Bogorodskiy',
