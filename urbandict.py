@@ -40,13 +40,14 @@ class UrbanDictParser(HTMLParser):
         div_class = attrs_dict.get('class')
         if div_class in ('def-header', 'meaning', 'example'):
             self._section = div_class
-            if div_class == 'def-header':  # NOTE: assume 'word' is the first section
+            if div_class == 'def-header':
+                # NOTE: assume 'word' is the first section
                 self.translations.append(
                     {'word': '', 'def': '', 'example': ''})
 
     def handle_endtag(self, tag):
         if tag == 'div':
-            #NOTE: assume there is no nested <div> in the known sections
+            # NOTE: assume there is no nested <div> in the known sections
             self._section = None
 
     def handle_data(self, data):
