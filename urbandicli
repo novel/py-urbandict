@@ -71,6 +71,9 @@ if __name__ == "__main__":
                     initial_indent='  * ',
                     subsequent_indent=' ' * 4)
                     ))]
+            category = translations[index]['category']
+            if category != 'unknown':
+                output += ["\n  Category: {}".format(category)]
         output += ['\n']
 
     output_string = ''.join(output)

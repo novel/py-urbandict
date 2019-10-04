@@ -34,31 +34,36 @@ class UrbanDictParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         attrs_dict = dict(attrs)
 
-        if tag != "div":
+        if tag not in ('div', 'a', 'span'):
             return
 
-        div_class = attrs_dict.get('class')
-        if div_class in ('def-header', 'meaning', 'example'):
-            self._section = div_class
-            if div_class == 'def-header':
+        div_classes = set(attrs_dict.get('class', '').split(' '))
+        if div_classes == ['']:
+            return
+        known_classes = set(
+            ('def-header', 'meaning', 'example', 'word', 'category')
+        )
+        matching_classes = div_classes & known_classes
+        if len(matching_classes) == 1:
+            self._section = matching_classes.pop()
+            if self._section == 'def-header':
                 # NOTE: assume 'word' is the first section
                 self.translations.append(
-                    {'word': '', 'def': '', 'example': ''})
+                    {'word': '', 'def': '', 'example': '', 'category': ''})
 
     def handle_endtag(self, tag):
-        if tag == 'div':
+        if tag in ('div', 'a', 'span'):
             # NOTE: assume there is no nested <div> in the known sections
             self._section = None
 
     def handle_data(self, data):
-        if not self._section:
+        if not self._section or self._section == 'def-header':
             return
 
         if self._section == 'meaning':
             self._section = 'def'
-        elif self._section == 'def-header':
+        elif self._section in ('category', 'word'):
             data = data.strip()
-            self._section = 'word'
 
         self.translations[-1][self._section] += normalize_newlines(data)
 
