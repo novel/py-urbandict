@@ -1,9 +1,13 @@
 py-urbandict
 ============
 
+[![Build
+Status](https://travis-ci.org/novel/py-urbandict.svg?branch=master)](https://travis-ci.org/novel/py-urbandict)
+
 py-urbandict is a client for urbandictionary.com.
 
 Project page on github: https://github.com/novel/py-urbandict
+PyPI: https://pypi.org/project/urbandict/
 
 Installation
 ------------
