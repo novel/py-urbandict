@@ -80,7 +80,9 @@ def define(term):
               urlquote(term)
 
     f = urlopen(url)
-    data = f.read().decode('utf-8')
+    data = f.read()
+    if hasattr(data, 'decode'):
+        data = data.decode('utf-8')
 
     urbanDictParser = UrbanDictParser()
     urbanDictParser.feed(data)
