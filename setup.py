@@ -4,7 +4,7 @@ import multiprocessing  # noqa
 from setuptools import setup
 
 setup(name='urbandict',
-      version='0.5',
+      version='0.6',
       py_modules=['urbandict'],
       scripts=['urbandicli'],
       author='Roman Bogorodskiy',
